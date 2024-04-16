@@ -1,0 +1,97 @@
+<div class="container mx-auto px-4 py-8">
+  <!-- Search Input -->
+  <form>
+    <input
+    type="text"
+    [formControl]="searchControl"
+    class="p-2 w-full border border-gray-300 rounded-md focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+    placeholder="Search products..."
+  />
+  </form>
+  <!-- Loading State -->
+  <div *ngIf="loading" class="mt-4 text-center">
+    <h3>Loading...</h3>
+  </div>
+
+  <!-- No Products Found -->
+  <div *ngIf="!loading && products?.products?.length == 0" class="py-8 text-center">
+    No products found.
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error" class="text-red-500 py-8 text-center">
+    <span>Error fetching products.</span>
+    <br />
+    <button
+      (click)="onRetry()"
+      class="mt-4 px-4 py-2 border rounded bg-red-500 text-white hover:bg-red-700"
+    >
+      Try again
+    </button>
+  </div>
+
+  <!-- Product Cards Grid -->
+  <div *ngIf="products?.products?.length > 0">
+    <div
+      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-4"
+      *ngIf="!loading"
+    >
+      <div
+        *ngFor="let product of products.products"
+        class="bg-white p-4 border rounded-lg hover:border-violet-300 cursor-pointer"
+        (click)="onProductClicked(product)"
+      >
+        <img
+          src="{{ product.thumbnail }}"
+          alt="{{ product.title }}"
+          class="rounded-md h-48 w-full object-cover mb-4"
+        />
+        <!-- Product Details -->
+        <p class="text-lg font-bold">{{ product.title }}</p>
+        <p class="text-sm text-gray-500">{{ product.description }}</p>
+        <hr>
+        <!-- Pricing and Discount -->
+        <div class="flex justify-between items-center m-2">
+          <span class="text-lg font-bold">${{ product.price }}</span>
+          <span class="text-sm text-red-500"
+            >{{ product.discountPercentage }}% off</span
+          >
+        </div>
+        <!-- Rating and Stock -->
+        <div class="flex justify-between items-center m-2">
+          <div class="flex items-center">
+            <svg
+              fill="currentColor"
+              class="w-4 h-4 text-yellow-500 mr-1"
+              viewBox="0 0 20 20"
+            >
+              <path
+                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.971c.1.309.382.531.707.531h4.17c1.002 0 1.422 1.225.707 1.847l-3.383 2.947c-.25.218-.357.566-.264.886l1.286 3.971c.3.921-.755 1.688-1.565 1.103L10 13.417l-3.795 2.946c-.81.585-1.865-.182-1.565-1.103l1.286-3.971c.093-.32-.014-.668-.264-.886L2.479 9.276c-.715-.622-.295-1.847.707-1.847h4.17c.325 0 .607-.222.707-.531l1.286-3.971z"
+              />
+            </svg>
+            <span>{{ product.rating }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex justify-center mt-8 space-x-4">
+      <!-- Pagination Controls -->
+      <button
+        (click)="onPrevPage()"
+        [disabled]="page <= 1"
+        class="px-4 py-2 border rounded bg-gray-200 text-gray-800 hover:bg-gray-300 disabled:opacity-50"
+      >
+        &#8592; Previous
+      </button>
+      <span class="py-2">{{ page }} / {{ products.totalPages }}</span>
+      <button
+        (click)="onNextPage()"
+        [disabled]="page >= products.totalPages"
+        class="px-4 border rounded bg-gray-200 text-gray-800 hover:bg-gray-300 disabled:opacity-50"
+      >
+        Next &#8594;
+      </button>
+    </div>
+  </div>
+</div>
